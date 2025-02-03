@@ -5,19 +5,37 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User,auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+import datetime
+from time import strftime
 # Create your views here.
 
 @login_required
 def home(request):
 	user =  request.user
+	if(user.is_staff): return staffHome(request)
 	name = user.username
-	return HttpResponse(f"hello {name}")
+	return render(request,'usr_home_pg.html',{'username':name,'tm':part_of_day()})
 
 @login_required
 def logout(request):
         auth.logout(request)
         return redirect('login')
+
+def part_of_day():
+	present_time = int(datetime.datetime.now().strftime ("%H"))
+	if present_time >= 0 and present_time <= 12:
+		return 'good morning,have a nice day'
+	elif present_time > 12 and present_time < 16:
+		return 'good afternoon' 
+	elif present_time >= 16 and present_time <=18:
+		return 'good evening,fells fresh'
+	else:
+		return 'good night,sleep well'
+	
+@login_required
+def staffHome(request):
+	return HttpResponse("WELCOME STAFF")
+
 
 def testview(request):
 	return render(request,'welcome.html')

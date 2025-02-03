@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="{% static 'styles/login_style.css' %}"/>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static 'images/logo.png' %}" rel="shortcut icon" sizes="196x196">
+  <title>Home page</title>
+  <meta name="theme-color" content="rgba(0,0,0,0)">
+  <style>
+  .join_box{
+    width:100%;
+    height:200px;
+    background-color:white;
+    border-radius:10px;
+    position:relative;
+}
+  
+  .sub{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    width:250px;
+    height:125px;
+    border:solid 1px #e6e6e6;
+    border-radius:10px;
+    text-align:center;
+  }
+  .sub_center button{
+    margin-left:10px;
+    padding:10px 5px 10px 5px;
+    border-radius:20px;
+    border:1px solid #ff8a05;
+    background: white;
+    color: #ff8a05;
+  }
+  .join_box .sub .sub_center{
+    display:flex;
+    justify-content:center;
+    margin-top:40px;
+  }
+  
+.bottom_nav{
+  
+  border-radius:10px;
+  position: sticky;
+  bottom:2px;
+  background-color:white;
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  transition: all .5s;
+}
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="user_attention">Hey {{username}}</h1>
+    <p class="wish">{{tm}}</p>
+    <i class="notify"><ion-icon name="notifications"></ion-icon></i>
+  </header>
+  <form>
+    <div class="s">
+      <div class="search">
+        <label for="in" class="sricon"><ion-icon name="search-outline"></ion-icon></label>
+        <input type="text" class="input_field" id="in" placeholder="Search...">
+      </div>
+      <div class="sroptions">
+        <i class="options"><ion-icon name="options-outline"></ion-icon></i>
+      </div>
+    </div>
+  </form>
+  <div class="menu_wrap">
+    <div class="menu">
+      <img src="{% static 'images/feeds.png' %}" width="20px" height="20px;">
+      Posts
+    </div>
+    <div class="menu">
+      <img src="{% static 'images/newsicon.png' %}" width="20px" height="20px;">
+      News
+    </div>
+    <div class="menu">
+      <img src="{% static 'images/chaticon.png' %}" width="20px" height="20px;">
+      <a href="chat" style="color:black;">Chats</a>
+    </div>
+  </div>
+  <h3></h3>
+  <div class="join_box">
+    <div class="sub">
+      <div class="sub_center">
+        <button>Join room</button>
+        <button>Create room</button>
+      </div>
+        <p style="font-size:.8em;">Join or create room for group chat</p>
+    </div>
+  </div>
+  <h3>Top News</h3>
+  <div class="infocontainer">
+    <div class="lfsdblk">
+      <div class="nsimg">
+        <img src="{% static 'images/newsdm2.jpg' %}" height="100px">
+        <h4 style="margin-top:8px;padding-left:4px;margin-bottom:0;">INDIA NEWS</h4>
+        <h5 style="margin-top:7px;padding-left:4px;margin-bottom:0;">Bengal BJP suspends two former vice-presidents who joined dissidents</h5>
+        <p style="font-size:.8em;padding-left:4px;">The show-cause letters were sent on Sunday without any meeting of the state disciplinary action committee meeting, Ritesh Tiwari alleged hours before the suspension order came on Monday evening.
+          The West Bengal unit of the Bharatiya Janata Party (BJP) temporarily suspended two of its former state vice-presidents, Jay Prakash Majumdar and Ritesh Tiwari on Monday, charging them with making statements against the party. (HT FILE PHOTO.)
+        </p>
+      </div>
+    </div>
+    <div class="rtsdblk">
+      <div class="childblk" id="topcld">
+        <img src="{% static 'images/covid.jpeg' %}">
+        <div class="backdropfl">
+          <div class="cldhding">
+            <div class="centerhd">
+              <p style=""><b>Latest news on covid-19</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="childblk">
+        <img src="{% static 'images/sports.jpeg' %}">
+        <div class="backdropfl">
+          <div class="cldhding">
+            <div class="centerhd">
+              <p style=""><b>Latest news on sports</b></p>
+            </div>
+          </div>
+        </div>        
+     </div>
+    </div>
+  </div>
+  <div>
+    <h3>Recent Chats</h3>
+  </div>
+  <button><a href="logout">Logout</a></button>
+  <div class="bottom_nav" id="bottom_nav">
+    <div class="icons">
+      <div class="icon">
+        <i><ion-icon name="chatbubbles-outline"></ion-icon></i>
+        <p>Chats</p>
+      </div>
+    </div>
+    <div class="icons">
+      <div class="icon">
+        <i><ion-icon name="people-outline"></ion-icon></i>
+        <p>Groups</p>
+      </div>
+    </div>
+    <div class="icons">
+      <div class="icon" id="home">
+        <i><ion-icon name="home-outline"></ion-icon></i>
+        <p class="label_icon">Home</p>
+      </div>
+    </div>
+    <div class="icons">
+      <div class="icon">
+        <i><ion-icon name="receipt-outline"></ion-icon></i>
+        <p>News</p>
+      </div>
+    </div>
+    <div class="icons">
+      <div class="icon">
+        <i><ion-icon name="settings-outline"></ion-icon></i>
+        <p>settings</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
