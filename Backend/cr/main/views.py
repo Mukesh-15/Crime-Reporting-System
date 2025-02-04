@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User,auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .models import UserReports
 import datetime
 from time import strftime
 # Create your views here.
@@ -15,6 +16,24 @@ def home(request):
 	if(user.is_staff): return staffHome(request)
 	name = user.username
 	return render(request,'usr_home_pg.html',{'username':name,'tm':part_of_day()})
+
+@login_required
+def crimeReporting(request):
+	crimeList = ["Violent crime","Kidnapping","Theft","Sexual assault","Drug offences","Fraud","Other"]
+
+	return render(request,'reporting.html',{'crimeLis':crimeList})
+
+@login_required
+def saveReport(request):
+	if(request.method == 'POST'):
+		type = request.POST['type_of_report']
+		disc = request.POST['dis']
+		newReport = UserReports(title=type,dis=disc)
+		newReport.save()
+		#just testing
+		return HttpResponse("<h1>REPORTED</h1>")
+	
+	return HttpResponseRedirect("report-form")
 
 @login_required
 def logout(request):
@@ -28,13 +47,14 @@ def part_of_day():
 	elif present_time > 12 and present_time < 16:
 		return 'good afternoon' 
 	elif present_time >= 16 and present_time <=18:
-		return 'good evening,fells fresh'
+		return 'good evening'
 	else:
-		return 'good night,sleep well'
+		return 'good night'
 	
 @login_required
 def staffHome(request):
-	return HttpResponse("WELCOME STAFF")
+	items = UserReports.objects.all()
+	return render(request,'todo.html',{'content':items})
 
 
 def testview(request):
