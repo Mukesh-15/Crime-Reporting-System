@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta name="theme-color" content="#49abab">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="{% static 'styles/todo.css' %}"/>
+  <title>Todo</title>
+  <link href="{% static 'images/logo.png' %}" rel="shortcut icon" sizes="196x196">
+</head>
+<body>
+  <header>
+    <div>
+      <div><h1>
+        
+      </h1></div>
+      <div><h2>List of Reports</h2></div>
+    </div>
+  </header>
+  <div class="data">
+    <div>
+    {%for z in content %}
+      <div class="val">
+        <div class="txt" style="overflow:hidden;">
+          <p>{{z.title}}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="{% static 'styles/signinstyle.css' %}">
+  <title>Signin</title>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static 'images/logo.png' %}" rel="shortcut icon" sizes="256x256">
+</head>
+<body>
+  <div class="header">
+    <img src="{% static 'images/logo.png' %}" height="75px" width="150px">
+  </div>
+  <h2>Create new account</h2>
+  <form method="post" action="register">
+    {% csrf_token %}
+    <input type="mail" name="email" placeholder="Mail address" required="true">
+    <input type="text" name="firstname" placeholder="First name" required="true">
+    <input type="text" name="lastname" placeholder="Last name" required="true">
+    <input type="text"  name="username" placeholder="Username" required="true">
+    <input type="password" name="password" placeholder="Password" requied="true">
+    <input type="password" name="conform_password" placeholder="Conform password" required="true">
+    <div class="error" style="color:red; font-size:1em;">
+      {% for message in messages %}
+      <p>{{message}}</p>
+      {% endfor %}
+    </div>
+    <input type="submit" value="SIGNIN" class="subbtn">
+  </form>
+  <p>Already a user?<a href="/">login</a></p>
+</body>
+</html>

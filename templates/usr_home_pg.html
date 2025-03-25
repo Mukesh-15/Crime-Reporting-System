@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="{% static 'images/logo.png' %}" rel="shortcut icon" sizes="196x196">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <style>
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .notify {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .join-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .logout-btn {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Hey, {{ username }}</h1>
+        <p>{{ tm }}</p>
+        <i class="notify"><ion-icon name="notifications"></ion-icon></i>
+    </header>
+
+    <div class="container mt-4">
+
+        <!-- Crime Reporting Box -->
+        <div class="join-box">
+            <h4>Report a Crime</h4>
+            <p>Click the button below to submit a crime report.</p>
+            <a href="{% url 'report_crime' %}" class="btn btn-warning px-4">Report Crime</a>
+        </div>
+
+        <!-- User Reports -->
+        <h2 class="mt-5">Your Submitted Reports</h2>
+        {% if user_reports %}
+        <div class="table-container">
+            <table class="table table-bordered table-striped mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Report ID</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Submitted On</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in user_reports %}
+                    <tr>
+                        <td>{{ report.id }}</td>
+                        <td>{{ report.title }}</td>
+                        <td>
+                            <span class="badge {% if report.status == 'Resolved' %}bg-success{% elif report.status == 'In Progress' %}bg-primary{% else %}bg-warning{% endif %}">
+                                {{ report.status }}
+                            </span>
+                        </td>
+                        <td>{{ report.date }}</td>
+                        <td><a href="{% url 'view_report' report.id %}" class="btn btn-sm btn-outline-info">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No reports submitted yet.</p>
+        {% endif %}
+
+        <!-- Logout Button -->
+        <div class="logout-btn">
+            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

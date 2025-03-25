@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="{% static 'styles/loginstyle.css' %}">
+  <title>Login</title>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static 'images/logo.png' %}" rel="shortcut icon" sizes="500x500">
+  
+</head>
+<body>
+  <div class="header">
+    <img src="{% static 'images/logo.png' %}" height="75px" width="150px">
+  </div>
+  <h2>Login to CrimeTracker</h2>
+  <div class="center">
+    <form method="post" action="">
+      {% csrf_token %}
+      <input type="text" name="username" class="input_field" placeholder="username">
+      <input type="password" name="password" class="input_field" placeholder="password">
+      <div style="color:red; font-size:1em;">
+        {% for message in messages %}
+        <p>{{message}}</p>
+        {% endfor %}
+      </div>
+      <input type="submit" value="login" class="loginbtn">
+    </form>
+  </div>
+  <div class="center">
+  <button style="margin-top:10px;font-family: 'Rubik', sans-serif;font-size:1.2em;width:260px;height:2em;border-radius:10px;
+  border:solid 1.5px #ff2f05;
+  background: rgba(0,0,0,0);
+  color: #ff2f05;
+  outline:none;align-text:center;" id="forgotpassbtn">forgot password?</button>
+  </div>
+  <p id ="signin_ms">Donot have an account?<a href="register">Signin</a></p>
+</body>
+</html>
