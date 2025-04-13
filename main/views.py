@@ -1,17 +1,19 @@
-from django.shortcuts import render, redirect
+from datetime import datetime
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import UserCrimeReport
-import datetime
-from .forms import CrimeReportForm
-from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
+from .models import UserCrimeReport, EvidencePhoto
+from django.conf import settings
+import os
+
+
 # Part of Day Function
 def part_of_day():
-    present_time = datetime.datetime.now().hour
+    present_time = datetime.now().hour
     if present_time < 12:
         return 'Good morning, have a nice day'
     elif present_time < 16:
@@ -27,29 +29,25 @@ def home(request):
     if request.user.is_staff:
         return staff_home(request)
 
-    # Fetch reports submitted by the logged-in user
     user_reports = UserCrimeReport.objects.filter(user=request.user)
 
     return render(request, 'usr_home_pg.html', {
-        'username': request.user.username,
         'tm': part_of_day(),
-        'user_reports': user_reports,  # Pass reports to the template
+        'user_reports': user_reports,
+        "user": request.user,
     })
-
 
 # Staff Home (Admin View)
 @login_required
 def staff_home(request):
-    # Fetch crime reports from the database
     if not request.user.is_staff:
         return redirect('/')
-    
+
     crime_reports = UserCrimeReport.objects.all()
 
-    # Statistics calculation
     total_crimes = crime_reports.count()
     pending_reports = crime_reports.filter(status="Pending").count()
-    under_investigation = crime_reports.filter(status="In Progress").count()
+    under_investigation = crime_reports.filter(status="Under Investigation").count()
     resolved_cases = crime_reports.filter(status="Resolved").count()
 
     context = {
@@ -58,30 +56,40 @@ def staff_home(request):
         "pending_reports": pending_reports,
         "under_investigation": under_investigation,
         "resolved_cases": resolved_cases,
+        "user": request.user,
     }
 
-    return render(request, "admin_home.html", context)
+    return render(request, "PoliceDashboard.html", context)
 
-from .forms import CrimeReportForm
-
+def report_success(request):
+    return render(request, 'report_success.html')
 # Crime Reporting Page
 @login_required
 def crime_reporting(request):
     if request.method == 'POST':
-        form = CrimeReportForm(request.POST)
-        if form.is_valid():
-            crime_report = form.save(commit=False)
-            crime_report.user = request.user  # Assign the logged-in user
-            crime_report.status = 'Pending'  # Default status
-            crime_report.save()
-            messages.success(request, "Crime report submitted successfully!")
-            return redirect('/report-crime')
-        else:
-            print(form.errors)  # 🔴 Debugging: Print errors to console
-            messages.error(request, "All fields are required!")
+        typeofCrime = request.POST.get('typeofCrime')
+        description = request.POST.get('description')
+        location = request.POST.get('location')
+        priority = int(request.POST.get('priority', 3))
+        date_str = request.POST.get('incident_date')
+        time_str = request.POST.get('incident_time')
+        date = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
 
-    form = CrimeReportForm()
-    return render(request, 'reporting.html', {'form': form})
+        report = UserCrimeReport.objects.create(
+            user=request.user,
+            typeofCrime=typeofCrime,
+            description=description,
+            location=location,
+            date=date,
+            priority=priority,
+        )
+
+        for image_file in request.FILES.getlist('evidence_photos'):
+            EvidencePhoto.objects.create(report=report, image=image_file)
+
+        return redirect('home')
+
+    return render(request, 'reporting.html')
 
 
 
@@ -89,13 +97,19 @@ def crime_reporting(request):
 @login_required
 def view_report(request, report_id):
     report = get_object_or_404(UserCrimeReport, id=report_id)
-    return render(request, 'view_report.html', {'report': report,'isSuperUser':request.user.is_staff})
+    evidence_photos = report.photos.all()
+    return render(request, 'view_report.html', {
+        'report': report,
+        'evidence_photos': evidence_photos,
+        'isSuperUser': request.user.is_staff,
+    })
 
 # Update Crime Report
 @login_required
 def update_report(request, report_id):
     if not request.user.is_staff:
         return redirect('/')
+
     report = get_object_or_404(UserCrimeReport, id=report_id)
 
     if request.method == 'POST':
@@ -113,12 +127,12 @@ def logout_user(request):
     auth_logout(request)
     return redirect(reverse('login'))
 
-# Login View (Renamed to Avoid Conflict)
+# Login View
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
-        
+
         user = authenticate(username=username, password=password)
         if user:
             auth_login(request, user)
@@ -126,13 +140,14 @@ def user_login(request):
         else:
             messages.error(request, 'Incorrect username or password')
             return redirect(reverse('login'))
-    
+
     if request.user.is_authenticated:
         return redirect('/')
-    
+
     return render(request, 'login.html')
 
-# Sign Up (Register)
+# Sign Up
+
 def sign_up(request):
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()
@@ -141,10 +156,10 @@ def sign_up(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
         confirm_password = request.POST.get('confirm_password', '').strip()
-        
+
         if not (email and first_name and last_name and username and password and confirm_password):
             messages.error(request, "All fields are required!")
-            return redirect(reverse('register')) 
+            return redirect(reverse('register'))
 
         if password != confirm_password:
             messages.error(request, "Passwords do not match!")

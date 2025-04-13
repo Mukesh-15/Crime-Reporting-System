@@ -1,42 +1,208 @@
 {% load static %}
 <!DOCTYPE html>
+<html lang="en">
 
-<html>
 <head>
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" href="{% static 'styles/loginstyle.css' %}">
-  <title>Login</title>
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="{% static 'images/logo.png' %}" rel="shortcut icon" sizes="500x500">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrimeTracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function scrollToLogin() {
+      const section = document.getElementById("login-section");
+      section?.scrollIntoView({ behavior: "smooth" });
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="header">
-    <img src="{% static 'images/logo.png' %}" height="75px" width="150px">
-  </div>
-  <h2>Login to CrimeTracker</h2>
-  <div class="center">
-    <form method="post" action="">
-      {% csrf_token %}
-      <input type="text" name="username" class="input_field" placeholder="username">
-      <input type="password" name="password" class="input_field" placeholder="password">
-      <div style="color:red; font-size:1em;">
-        {% for message in messages %}
-        <p>{{message}}</p>
-        {% endfor %}
+
+<body class="bg-white text-gray-800">
+
+  <div class="bg-blue-50 py-16 md:py-24">
+    <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+      <div class="md:w-1/2 md:pr-12 mb-10 md:mb-0">
+        <div class="flex items-center mb-4">
+          <svg class="h-10 w-10 text-blue-600 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <h1 class="text-4xl font-bold text-blue-600">CrimeTracker</h1>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-bold mb-6">
+          Report Crime. Stay Safe. Build Stronger Communities.
+        </h2>
+        <p class="text-lg mb-8 text-gray-600">
+          A simple and effective way for citizens to report crimes, track progress, and receive alerts about incidents
+          in their area.
+        </p>
+        <div class="flex items-center text-red-600 mb-8">
+          <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-sm font-medium">For emergencies always call 911 first</span>
+        </div>
       </div>
-      <input type="submit" value="login" class="loginbtn">
-    </form>
-  </div>
-  <div class="center">
-  <button style="margin-top:10px;font-family: 'Rubik', sans-serif;font-size:1.2em;width:260px;height:2em;border-radius:10px;
-  border:solid 1.5px #ff2f05;
-  background: rgba(0,0,0,0);
-  color: #ff2f05;
-  outline:none;align-text:center;" id="forgotpassbtn">forgot password?</button>
-  </div>
-  <p id ="signin_ms">Donot have an account?<a href="register">Signin</a></p>
+      <div id="login-section" class="md:w-1/2 w-full">
+        <div class="w-full max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+          <div class="mb-4">
+            <h1 class="text-2xl font-bold">Login</h1>
+            <p class="text-gray-600">Access the crime reporting system with your credentials</p>
+          </div>
+
+          <!-- Error message block -->
+          {% for message in messages%}
+          <div id="error" class=" bg-red-100 text-red-700 p-3 mb-4 rounded text-sm">
+            <strong>Error:</strong> {{message}}
+          </div>
+          {% endfor %}
+
+
+          <form class="space-y-4" method="post" action="">
+            {% csrf_token %}
+            <div class="space-y-2">
+              <label for="role" class="block font-medium">I am a:</label>
+              <div class="flex gap-4">
+                <label class="flex items-center gap-1">
+                  <input type="radio" name="role" id="citizen" value="citizen" checked>
+                  Citizen
+                </label>
+                <label class="flex items-center gap-1">
+                  <input type="radio" name="role" id="police" value="police">
+                  Police
+                </label>
+                <label class="flex items-center gap-1">
+                  <input type="radio" name="role" id="admin" value="admin">
+                  Admin
+                </label>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label for="username" class="block font-medium">username</label>
+              <input id="username" type="username" name="username" class="w-full px-3 py-2 border rounded"
+                placeholder="Enter Username" required>
+            </div>
+
+            <div class="space-y-2">
+              <label for="password" class="block font-medium">Password</label>
+              <input id="password" type="password" name="password" class="w-full px-3 py-2 border rounded"
+                placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">How CrimeTracker Works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          <!-- Feature 1 -->
+          <div class="bg-white rounded-lg p-6 border">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              📍
+            </div>
+            <h3 class="font-bold text-xl mb-2">Precise Location Reporting</h3>
+            <p class="text-gray-600">Easily mark the exact location of incidents with our interactive map interface.</p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="bg-white rounded-lg p-6 border">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              🔔
+            </div>
+            <h3 class="font-bold text-xl mb-2">Real-time Alerts</h3>
+            <p class="text-gray-600">Get instant notifications when crimes are reported in your neighborhood.</p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="bg-white rounded-lg p-6 border">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              ⏱️
+            </div>
+            <h3 class="font-bold text-xl mb-2">Rapid Response</h3>
+            <p class="text-gray-600">Direct reporting to authorities ensures faster emergency response times.</p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="bg-white rounded-lg p-6 border">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              ✅
+            </div>
+            <h3 class="font-bold text-xl mb-2">Track Report Status</h3>
+            <p class="text-gray-600">Follow the progress of your report from submission to resolution.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Steps Section -->
+    <div class="bg-gray-100 py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-16">Report in Three Simple Steps</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="flex flex-col items-center text-center">
+            <div
+              class="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-4">
+              1</div>
+            <h3 class="font-bold text-xl mb-2">Create an Account</h3>
+            <p class="text-gray-600">Sign up with your username to access the reporting system.</p>
+          </div>
+          <div class="flex flex-col items-center text-center">
+            <div
+              class="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-4">
+              2</div>
+            <h3 class="font-bold text-xl mb-2">Submit a Report</h3>
+            <p class="text-gray-600">Provide details about the incident including location and photos.</p>
+          </div>
+          <div class="flex flex-col items-center text-center">
+            <div
+              class="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-4">
+              3</div>
+            <h3 class="font-bold text-xl mb-2">Track Progress</h3>
+            <p class="text-gray-600">Follow your report's status as authorities investigate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="py-16">
+      <div class="container mx-auto px-4">
+        <div class="bg-blue-600 text-white rounded-lg p-8 md:p-12 text-center">
+          <h2 class="text-3xl font-bold mb-4">Join CrimeTracker Today</h2>
+          <p class="text-xl mb-8 max-w-2xl mx-auto">
+            Be part of making your community safer. Report incidents, stay informed, and help law enforcement respond
+            effectively.
+          </p>
+          <button onclick="scrollToLogin()"
+            class="bg-white text-blue-600 px-6 py-3 rounded font-semibold hover:bg-gray-100 transition">
+            Get Started
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-8">
+      <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center mb-4 md:mb-0">
+          <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <span class="font-bold text-blue-600">CrimeTracker</span>
+        </div>
+        <div class="text-sm text-gray-600">© 2025 CrimeTracker. All rights reserved.</div>
+      </div>
+    </footer>
+
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 from django import forms
 from .models import UserCrimeReport
+from .models import EvidencePhoto
 
 class CrimeReportForm(forms.ModelForm):
     class Meta:
@@ -23,3 +24,9 @@ class CrimeReportForm(forms.ModelForm):
         if len(description) < 10:
             raise forms.ValidationError("Description must be at least 10 characters long.")
         return description
+
+
+class EvidencePhotoForm(forms.ModelForm):
+    class Meta:
+        model = EvidencePhoto
+        fields = ['image']

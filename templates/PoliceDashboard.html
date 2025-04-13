@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crime Reports Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    header {
+      position: sticky;
+      top: 0;
+      margin-bottom: 10px;
+      margin-top: -10px;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 p-6 font-sans">
+  {% include "Header.html" %}
+  <div class="space-y-6 max-w-7xl mx-auto">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-bold">Crime Reports Dashboard</h1>
+        <p class="text-gray-500">Monitor and manage incoming crime reports</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div>
+      <div class="flex flex-wrap gap-2 text-sm font-medium border-b pb-2">
+        <button class="px-3 py-1 rounded bg-gray-200">All Reports</button>
+        <button class="px-3 py-1 rounded bg-gray-100">Pending <span
+            class="ml-1 px-2 py-0.5 border rounded text-xs">4</span></button>
+        <button class="px-3 py-1 rounded bg-gray-100">Investigating <span
+            class="ml-1 px-2 py-0.5 border rounded text-xs">2</span></button>
+        <button class="px-3 py-1 rounded bg-red-100 text-red-600">Critical <span
+            class="ml-1 px-2 py-0.5 border border-red-400 rounded text-xs">1</span></button>
+        <button class="px-3 py-1 rounded bg-gray-100">Resolved <span
+            class="ml-1 px-2 py-0.5 border rounded text-xs">5</span></button>
+      </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
+      <div class="relative w-full sm:flex-1">
+        <input type="text" placeholder="Search by crime type, location, or citizen name..."
+          class="w-full pl-8 pr-4 py-2 rounded border border-gray-300" />
+        <svg class="absolute left-2.5 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <select class="w-full sm:w-48 border border-gray-300 rounded px-3 py-2">
+        <option>All Types</option>
+        <option>Theft</option>
+        <option>Assault</option>
+      </select>
+      <button class="p-2 border rounded bg-white">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582a9.993 9.993 0 0117.708 0H20v5h-2.29a9.993 9.993 0 01-17.708 0H4V4z" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Reports Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Example Crime Card -->
+      {% for report in crime_reports %}
+      <div class="bg-white rounded-lg shadow p-4 space-y-3">
+        <h3 class="font-bold text-lg">{{ report.typeofCrime }}</h3>
+        <div class="flex gap-2 text-xs">
+          {% if report.status == "Pending" %}
+          <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Pending</span>
+          {% elif report.status == "Under Investigation" %}
+          <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Under Investigation</span>
+          {% elif report.status == "Resolved" %}
+          <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Resolved</span>
+          {% elif report.status == "Rejected" %}
+          <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Rejected</span>
+          {% else %}
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded">{{ report.status }}</span>
+          {% endif %}
+
+          {% if report.priority == 5 %}
+          <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Critical Priority</span>
+          {% elif report.priority == 4 %}
+          <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded">High Priority</span>
+          {% elif report.priority == 3 %}
+          <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Medium Priority</span>
+          {% elif report.priority == 2 %}
+          <span class="text-xs bg-green-100 text-gray-800 px-2 py-0.5 rounded">Low Priority</span>
+          {% elif report.priority == 1 %}
+          <span class="text-xs bg-green-100 text-gray-800 px-2 py-0.5 rounded">Very Low Priority</span>
+          {% endif %}
+        </div>
+        <p class="text-sm text-gray-600">{{ report.description }}</p>
+        <div class="text-sm text-gray-400">Reported by {{ report.user.get_full_name }}</div>
+        <div class="flex justify-between text-xs text-gray-500 mt-2">
+          <span>{{ report.date }}</span>
+        </div>
+        <button class="mt-3 text-blue-600 text-sm font-semibold hover:underline"><a
+          href="{% url 'view_report' report.id %}">View Details</a></button>
+      </div>
+
+      {% empty %}
+      <div class="text-center py-12">
+        <div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-4">
+          <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.29 3.86L1.82 9.14a2 2 0 000 3.72l8.47 5.28a2 2 0 002.42 0l8.47-5.28a2 2 0 000-3.72L12.71 3.86a2 2 0 00-2.42 0z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold">No reports found</h3>
+        <p class="text-gray-500 mt-2">There are no crime reports in the system yet.</p>
+      </div>
+      {% endfor %}
+
+      <!-- Repeat above card statically or copy for more examples -->
+    </div>
+
+    <!-- Empty State Example -->
+    <!--
+    
+    -->
+  </div>
+</body>
+
+</html>

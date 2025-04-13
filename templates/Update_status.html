@@ -1,41 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Crime Report</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update Crime Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Update Crime Report</h2>
-        
-        <form action="{% url 'update_report' report.id %}" method="POST">
-            {% csrf_token %}
-            
-            <div class="mb-3">
-                <label for="reportId" class="form-label">Report ID</label>
-                <input type="text" class="form-control" id="reportId" name="reportId" readonly value="{{ report.id }}">
-            </div>
-            
-            <div class="mb-3">
-                <label for="adminNotes" class="form-label">Ongoing Situation</label>
-                <textarea class="form-control" id="adminNotes" name="adminNotes" rows="4" 
-                          placeholder="Describe the current situation...">{{ report.admin_notes }}</textarea>
-            </div>
-            
-            <div class="mb-3">
-                <label for="status" class="form-label">Update Status</label>
-                <select class="form-select" id="status" name="status">
-                    <option value="Pending" {% if report.status == 'Pending' %}selected{% endif %}>Pending</option>
-                    <option value="Under Investigation" {% if report.status == 'Under Investigation' %}selected{% endif %}>Under Investigation</option>
-                    <option value="Resolved" {% if report.status == 'Resolved' %}selected{% endif %}>Resolved</option>
-                </select>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Update Report</button>
-            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary ms-2">Cancel</a>
-        </form>
+
+<body class="bg-gray-50 text-gray-800 p-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="border rounded-lg bg-white shadow p-6">
+      <h2 class="text-xl font-bold mb-4">Update Crime Report</h2>
+
+      <form action="{% url 'update_report' report.id %}" method="POST" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Report ID (readonly) -->
+        <div>
+          <label for="reportId" class="block text-sm font-medium text-gray-700">Report ID</label>
+          <input type="text" id="reportId" readonly value="{{ report.id }}"
+            class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm" />
+        </div>
+
+        <!-- Admin Notes -->
+        <div>
+          <label for="adminNotes" class="block text-sm font-medium text-gray-700">Ongoing Situation</label>
+          <textarea id="adminNotes" name="adminNotes" rows="4" placeholder="Describe the current situation..."
+            class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-sm">{{ report.admin_notes }}</textarea>
+        </div>
+
+        <!-- Update Status -->
+        <div>
+          <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+          <select id="status" name="status"
+            class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-sm">
+            <option value="Pending" {% if report.status == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="Under Investigation" {% if report.status == 'Under Investigation' %}selected{% endif %}>Under Investigation</option>
+            <option value="Resolved" {% if report.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+            <option value="Rejected" {% if report.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between pt-4 border-t mt-6">
+          <a href="{% url 'admin_dashboard' %}"
+            class="border px-4 py-2 rounded text-sm bg-gray-100 hover:bg-gray-200">Cancel</a>
+          <button type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">Update Report</button>
+        </div>
+      </form>
     </div>
+  </div>
 </body>
+
 </html>
