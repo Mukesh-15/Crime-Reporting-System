@@ -12,8 +12,10 @@
       top: 0;
       margin-bottom: 10px;
       margin-top: -10px;
+      z-index: 2;
     }
   </style>
+
 </head>
 
 <body class="bg-gray-50 text-gray-900 p-6 font-sans">
@@ -27,19 +29,26 @@
     </div>
 
     <!-- Tabs -->
-    <div>
-      <div class="flex flex-wrap gap-2 text-sm font-medium border-b pb-2">
-        <button class="px-3 py-1 rounded bg-gray-200">All Reports</button>
-        <button class="px-3 py-1 rounded bg-gray-100">Pending <span
-            class="ml-1 px-2 py-0.5 border rounded text-xs">4</span></button>
-        <button class="px-3 py-1 rounded bg-gray-100">Investigating <span
-            class="ml-1 px-2 py-0.5 border rounded text-xs">2</span></button>
-        <button class="px-3 py-1 rounded bg-red-100 text-red-600">Critical <span
-            class="ml-1 px-2 py-0.5 border border-red-400 rounded text-xs">1</span></button>
-        <button class="px-3 py-1 rounded bg-gray-100">Resolved <span
-            class="ml-1 px-2 py-0.5 border rounded text-xs">5</span></button>
-      </div>
+    <div class="flex flex-wrap gap-2 text-sm font-medium border-b pb-2" id="status-filters">
+      <button class="filter-btn px-3 py-1 rounded" data-type="All" onclick="filterStatus('All', this)">All
+        Reports</button>
+      <button class="filter-btn status px-3 py-1 rounded" data-type="Pending" onclick="filterStatus('Pending', this)">
+        Pending <span class="ml-1 px-2 py-0.5 border rounded text-xs">{{ status_counts.pending }}</span>
+      </button>
+      <button class="filter-btn status px-3 py-1 rounded" data-type="Under Investigation"
+        onclick="filterStatus('Under Investigation', this)">
+        Investigating <span class="ml-1 px-2 py-0.5 border rounded text-xs">{{ status_counts.investigating }}</span>
+      </button>
+      <button class="filter-btn status px-3 py-1 rounded text-red-700 border border-red-300 bg-red-100 hover:bg-red-200"
+        data-priority="5" onclick="filterPriority(5, this)">
+        Critical <span class="ml-1 px-2 py-0.5 border border-red-400 rounded text-xs">{{ status_counts.critical}}</span>
+      </button>
+      <button class="filter-btn status px-3 py-1 rounded" data-type="Resolved" onclick="filterStatus('Resolved', this)">
+        Resolved <span class="ml-1 px-2 py-0.5 border rounded text-xs">{{ status_counts.resolved }}</span>
+      </button>
     </div>
+
+
 
     <!-- Search and Filter -->
     <div class="flex flex-col sm:flex-row gap-4 items-center">
@@ -52,10 +61,17 @@
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
-      <select class="w-full sm:w-48 border border-gray-300 rounded px-3 py-2">
+      <select class="w-full sm:w-48 border border-gray-300 rounded px-3 py-2" id="crimeType" onchange="filterCrimes()">
         <option>All Types</option>
-        <option>Theft</option>
-        <option>Assault</option>
+        <option value="Theft">Theft</option>
+        <option value="Assault">Assault</option>
+        <option value="Vandalism">Vandalism</option>
+        <option value="Burglary">Burglary</option>
+        <option value="Traffic Incident">Traffic Incident</option>
+        <option value="Drug Activity">Drug Activity</option>
+        <option value="Suspicious Activity">Suspicious Activity</option>
+        <option value="Noise Complaint">Noise Complaint</option>
+        <option value="Other">Other</option>
       </select>
       <button class="p-2 border rounded bg-white">
         <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,11 +81,11 @@
       </button>
     </div>
 
-    <!-- Reports Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Example Crime Card -->
       {% for report in crime_reports %}
-      <div class="bg-white rounded-lg shadow p-4 space-y-3">
+      <div class="crime-card bg-white rounded-lg shadow p-4 space-y-3" data-type="{{ report.typeofCrime }}"
+        data-status="{{ report.status }}" data-priority="{{ report.priority }}">
         <h3 class="font-bold text-lg">{{ report.typeofCrime }}</h3>
         <div class="flex gap-2 text-xs">
           {% if report.status == "Pending" %}
@@ -102,7 +118,7 @@
           <span>{{ report.date }}</span>
         </div>
         <button class="mt-3 text-blue-600 text-sm font-semibold hover:underline"><a
-          href="{% url 'view_report' report.id %}">View Details</a></button>
+            href="{% url 'view_report' report.id %}">View Details</a></button>
       </div>
 
       {% empty %}
@@ -117,15 +133,57 @@
         <p class="text-gray-500 mt-2">There are no crime reports in the system yet.</p>
       </div>
       {% endfor %}
-
-      <!-- Repeat above card statically or copy for more examples -->
     </div>
-
-    <!-- Empty State Example -->
-    <!--
-    
-    -->
   </div>
+  <script>
+    const cards = document.querySelectorAll(".crime-card");
+  
+    function clearActiveButtons() {
+      document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.classList.remove("bg-gray-200", "bg-red-300", "text-white");
+        if (btn.innerText.includes("Critical")) {
+          btn.classList.remove("bg-red-600", "text-white");
+          btn.classList.add("bg-red-100", "text-red-700");
+        }
+      });
+    }
+    function filterCrimes() {
+      const filterValue = document.getElementById("crimeType").value.toLowerCase().trim();
+      cards.forEach(card => {
+        const type = (card.getAttribute("data-type") || "").toLowerCase();
+        card.style.display = (filterValue === "all types" || type.includes(filterValue)) ? "" : "none";
+      });
+    }
+    function setActiveButton(button, isCritical = false) {
+      if (isCritical) {
+        button.classList.remove("bg-red-100", "text-red-700");
+        button.classList.add("bg-red-600", "text-white");
+      } else {
+        button.classList.add("bg-gray-200");
+      }
+    }
+  
+    function filterStatus(status, button) {
+      cards.forEach(card => {
+        const cardStatus = card.getAttribute("data-status");
+        card.style.display = (status === "All" || cardStatus === status) ? "" : "none";
+      });
+      clearActiveButtons();
+      setActiveButton(button);
+    }
+  
+    function filterPriority(priority, button) {
+      cards.forEach(card => {
+        const cardPriority = parseInt(card.getAttribute("data-priority"));
+        card.style.display = (cardPriority === priority) ? "" : "none";
+      });
+      clearActiveButtons();
+      setActiveButton(button, true);
+    }
+  </script>
+  
+
+
 </body>
 
 </html>

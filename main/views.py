@@ -5,10 +5,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from django.utils import timezone
 from .models import UserCrimeReport, EvidencePhoto
 from django.conf import settings
-import os
+
 
 
 # Part of Day Function
@@ -45,17 +44,16 @@ def staff_home(request):
 
     crime_reports = UserCrimeReport.objects.all()
 
-    total_crimes = crime_reports.count()
-    pending_reports = crime_reports.filter(status="Pending").count()
-    under_investigation = crime_reports.filter(status="Under Investigation").count()
-    resolved_cases = crime_reports.filter(status="Resolved").count()
+    status_counts = {
+        "pending": crime_reports.filter(status="Pending").count(),
+        "investigating": crime_reports.filter(status="Under Investigation").count(),
+        "critical": crime_reports.filter(priority=5).count(),
+        "resolved": crime_reports.filter(status="Resolved").count(),
+    }
 
     context = {
         "crime_reports": crime_reports,
-        "total_crimes": total_crimes,
-        "pending_reports": pending_reports,
-        "under_investigation": under_investigation,
-        "resolved_cases": resolved_cases,
+        "status_counts": status_counts,
         "user": request.user,
     }
 
@@ -63,6 +61,7 @@ def staff_home(request):
 
 def report_success(request):
     return render(request, 'report_success.html')
+
 # Crime Reporting Page
 @login_required
 def crime_reporting(request):
@@ -70,6 +69,8 @@ def crime_reporting(request):
         typeofCrime = request.POST.get('typeofCrime')
         description = request.POST.get('description')
         location = request.POST.get('location')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
         priority = int(request.POST.get('priority', 3))
         date_str = request.POST.get('incident_date')
         time_str = request.POST.get('incident_time')
@@ -80,6 +81,8 @@ def crime_reporting(request):
             typeofCrime=typeofCrime,
             description=description,
             location=location,
+            latitude=latitude,
+            longitude=longitude,
             date=date,
             priority=priority,
         )
@@ -90,8 +93,6 @@ def crime_reporting(request):
         return redirect('home')
 
     return render(request, 'reporting.html')
-
-
 
 # View Crime Report
 @login_required

@@ -18,12 +18,14 @@ class UserCrimeReport(models.Model):
         (5, 'Critical'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Allow null values for existing data
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     typeofCrime = models.CharField(max_length=100, verbose_name="Type of Crime")
     description = models.TextField(verbose_name="Crime Description", default="No description provided.")  
     location = models.CharField(max_length=255, default="Unknown Location", verbose_name="Crime Location")
+    latitude = models.CharField(max_length=255, default="0", verbose_name="Latitude")
+    longititude = models.CharField(max_length=255, default="0", verbose_name="Longitude")
     date = models.DateTimeField(default=timezone.now, verbose_name="Reported Date")
-    submitted_at = models.DateTimeField(default=timezone.now, verbose_name="Submitted At")  # New field
+    submitted_at = models.DateTimeField(default=timezone.now, verbose_name="Submitted At")
     status = models.CharField(max_length=20, choices=CRIME_STATUS_CHOICES, default='Pending', verbose_name="Report Status")
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=2, verbose_name="Priority Level")
     admin_notes = models.TextField(blank=True, null=True, verbose_name="Admin Notes")
