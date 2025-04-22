@@ -1,36 +1,90 @@
 {% load static %}
 <!DOCTYPE html>
+<html lang="en">
 
-<html>
 <head>
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" href="{% static 'styles/signinstyle.css' %}">
-  <title>Signin</title>
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="{% static 'images/logo.png' %}" rel="shortcut icon" sizes="256x256">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - CrimeTracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="header">
-    <img src="{% static 'images/logo.png' %}" height="75px" width="150px">
-  </div>
-  <h2>Create new account</h2>
-  <form method="post" action="register">
-    {% csrf_token %}
-    <input type="mail" name="email" placeholder="Mail address" required="true">
-    <input type="text" name="firstname" placeholder="First name" required="true">
-    <input type="text" name="lastname" placeholder="Last name" required="true">
-    <input type="text"  name="username" placeholder="Username" required="true">
-    <input type="password" name="password" placeholder="Password" requied="true">
-    <input type="password" name="conform_password" placeholder="Conform password" required="true">
-    <div class="error" style="color:red; font-size:1em;">
+
+<body class="bg-blue-50 text-gray-800">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+      <div class="mb-6 text-center">
+        <div class="flex items-center justify-center mb-2">
+          <svg class="h-8 w-8 text-blue-600 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <h1 class="text-3xl font-bold text-blue-600">CrimeTracker</h1>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-700">Create Your Account</h2>
+      </div>
+
+      <!-- Error messages if any -->
       {% for message in messages %}
-      <p>{{message}}</p>
+      <div class="bg-red-100 text-red-700 p-3 mb-4 rounded text-sm">
+        <strong>Error:</strong> {{ message }}
+      </div>
       {% endfor %}
+
+      <form method="post" action="" class="space-y-4">
+        {% csrf_token %}
+
+        <div>
+          <label for="firstname" class="block font-medium">First Name</label>
+          <input type="text" name="firstname" id="firstname" placeholder="John" required
+            class="w-full px-3 py-2 border rounded">
+        </div>
+
+        <div>
+          <label for="lastname" class="block font-medium">Last Name</label>
+          <input type="text" name="lastname" id="lastname" placeholder="Doe" required
+            class="w-full px-3 py-2 border rounded">
+        </div>
+
+        <div>
+          <label for="username" class="block font-medium">Username</label>
+          <input type="text" name="username" id="username" placeholder="johndoe123" required
+            class="w-full px-3 py-2 border rounded">
+        </div>
+
+        <div>
+          <label for="phonenumber" class="block font-medium">Phone Number</label>
+          <input type="tel" name="phonenumber" id="phonenumber" placeholder="123-456-7890" required
+            class="w-full px-3 py-2 border rounded">
+        </div>
+
+        <div>
+          <label for="email" class="block font-medium">Email</label>
+          <input type="email" name="email" id="email" placeholder="you@example.com" required
+            class="w-full px-3 py-2 border rounded">
+        </div>
+
+        <div>
+          <label for="password" class="block font-medium">Password</label>
+          <input type="password" name="password" id="password" placeholder="••••••••" required
+            class="w-full px-3 py-2 border rounded">
+        </div>
+
+        <div>
+          <label for="confirm_password" class="block font-medium">Confirm Password</label>
+          <input type="password" name="confirm_password" id="confirm_password" placeholder="••••••••" required
+            class="w-full px-3 py-2 border rounded">
+        </div>
+
+        <button type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Sign Up</button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-gray-600">
+        Already have an account?
+        <a href="/login" class="text-blue-600 hover:underline">Login here</a>
+      </p>
     </div>
-    <input type="submit" value="SIGNIN" class="subbtn">
-  </form>
-  <p>Already a user?<a href="/">login</a></p>
+  </div>
 </body>
+
 </html>

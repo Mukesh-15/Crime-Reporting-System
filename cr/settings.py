@@ -76,8 +76,13 @@ WSGI_APPLICATION = 'cr.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'CrimeTracker',
+        'USER': 'root',
+        'PASSWORD': 'Mukeshraju@15',
+        'PORT': '3306',
     }
 }
 

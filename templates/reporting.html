@@ -89,7 +89,7 @@
             <input type="text" id="address" class="w-full border rounded p-2" placeholder="Address" name="location"
               required />
             <input type="hidden" id="latitude" name="latitude" />
-            <input type="hidden" id="longititude" name="longitude" />
+            <input type="hidden" id="longitude" name="longitude" />
             <p class="text-xs text-gray-500 mt-1">Drag the pin or click on the map to select location</p>
           </div>
 
@@ -136,7 +136,8 @@
       map.on('click', function (e) {
         const clickedLat = e.latlng.lat;
         const clickedLng = e.latlng.lng;
-
+        document.getElementById("latitude").value = clickedLat;
+        document.getElementById("longitude").value = clickedLng;
         if (pinMarker) {
           map.removeLayer(pinMarker);
         }

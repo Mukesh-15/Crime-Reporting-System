@@ -12,7 +12,7 @@
       <!-- Nav Links (Desktop) -->
       <nav class="hidden md:flex items-center space-x-4">
         <a href="/" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-        <a href="/report" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Report Crime</a>
+        <a href="report-crime/" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Report Crime</a>
         <a href="/analytics" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Analytics</a>
       </nav>
 
@@ -29,8 +29,10 @@
         <!-- User Menu -->
         <div class="relative group">
           <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-            <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-medium">{{user.username.upper.0}}</div>
-            <span class="hidden lg:inline text-gray-800">{{user.username.capitalize}}</span>
+            <a href="view-profile/"><div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-medium">{{user.username.upper.0}}</div></a>
+            <a class="hidden lg:inline text-gray-800" href="view-profile/"><span class="hidden lg:inline text-gray-800">{{user.username.capitalize}}</span></a>
+            
+            
           </button>
           <!-- Dropdown -->
           <div class="absolute right-0 mt-2 w-48 bg-white border shadow-md rounded-md text-sm hidden group-hover:block z-50">

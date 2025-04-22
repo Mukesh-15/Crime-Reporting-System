@@ -2,6 +2,16 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.get_full_name() or self.user.username
+    
+    
 class UserCrimeReport(models.Model):
     CRIME_STATUS_CHOICES = [
         ('Pending', 'Pending'),
@@ -23,7 +33,7 @@ class UserCrimeReport(models.Model):
     description = models.TextField(verbose_name="Crime Description", default="No description provided.")  
     location = models.CharField(max_length=255, default="Unknown Location", verbose_name="Crime Location")
     latitude = models.CharField(max_length=255, default="0", verbose_name="Latitude")
-    longititude = models.CharField(max_length=255, default="0", verbose_name="Longitude")
+    longitude = models.CharField(max_length=255, default="0", verbose_name="Longitude")
     date = models.DateTimeField(default=timezone.now, verbose_name="Reported Date")
     submitted_at = models.DateTimeField(default=timezone.now, verbose_name="Submitted At")
     status = models.CharField(max_length=20, choices=CRIME_STATUS_CHOICES, default='Pending', verbose_name="Report Status")

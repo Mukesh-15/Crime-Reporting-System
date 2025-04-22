@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Report Details</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body class="bg-gray-50 text-gray-800 p-6">
@@ -28,7 +36,7 @@
                         {% else %}
                         <span class="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded">{{ report.status }}</span>
                         {% endif %}
-                        {%   if report.priority == 5 %}
+                        {% if report.priority == 5 %}
                         <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Critical Priority</span>
                         {% elif report.priority == 4 %}
                         <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded">High Priority</span>
@@ -73,26 +81,37 @@
                             <span class="text-xs ml-2">Level {{ report.priority }}</span>
                         </div>
                     </div>
+                    <div class="mt-4">
+                        <h4 class="font-semibold mb-1">Ongoing stiuation</h4>
+                        <p class="p-3 rounded text-sm">
+                            {% if not report.admin_notes %}
+                            Report not reviewed yet
+                            {% else %}
+                            {{ report.admin_notes }}
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
 
                 <div>
                     <h4 class="font-semibold mb-2">Location</h4>
                     <div class="h-48 border rounded-md bg-gray-200 mb-2 flex items-center justify-center">
-                        <span class="text-gray-500">Map Placeholder</span>
+                        <div id="map"></div>
+                        <!-- <span class="text-gray-500">Map Placeholder</span> -->
                     </div>
                     <p class="text-sm text-gray-500">{{ report.location }}</p>
 
                     <div class="mt-4">
                         <h4 class="font-semibold mb-2">Evidence Photos</h4>
                         {% if evidence_photos %}
-                            <div class="grid grid-cols-3 gap-2">
-                                {% for photo in evidence_photos %}
-                                    <img src="{{ photo.image.url }}" alt="Evidence Photo"
-                                         class="aspect-square object-cover rounded border shadow" />
-                                {% endfor %}
-                            </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            {% for photo in evidence_photos %}
+                            <img src="{{ photo.image.url }}" alt="Evidence Photo"
+                                class="aspect-square object-cover rounded border shadow" />
+                            {% endfor %}
+                        </div>
                         {% else %}
-                            <p class="text-sm text-gray-500">No evidence images uploaded.</p>
+                        <p class="text-sm text-gray-500">No evidence images uploaded.</p>
                         {% endif %}
                     </div>
                 </div>
@@ -109,5 +128,32 @@
         </div>
     </div>
 </body>
+<script>
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                var latitude = {{report.latitude}};
+                var longitude = {{report.longitude}};
+
+                // Initialize the map after coordinates are available
+                var map = L.map('map').setView([latitude, longitude], 13);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                // Optionally add a marker
+                L.marker([latitude, longitude]).addTo(map)
+                    .bindPopup("You are here!")
+                    .openPopup();
+            },
+            function (error) {
+                alert(error.message);
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
+</script>
 
 </html>

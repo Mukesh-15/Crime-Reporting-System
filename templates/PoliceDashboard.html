@@ -73,19 +73,15 @@
         <option value="Noise Complaint">Noise Complaint</option>
         <option value="Other">Other</option>
       </select>
-      <button class="p-2 border rounded bg-white">
-        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 4v5h.582a9.993 9.993 0 0117.708 0H20v5h-2.29a9.993 9.993 0 01-17.708 0H4V4z" />
-        </svg>
-      </button>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Example Crime Card -->
       {% for report in crime_reports %}
       <div class="crime-card bg-white rounded-lg shadow p-4 space-y-3" data-type="{{ report.typeofCrime }}"
-        data-status="{{ report.status }}" data-priority="{{ report.priority }}">
+        data-status="{{ report.status }}" data-priority="{{ report.priority }}" data-title="{{ report.typeofCrime }}"
+        data-description="{{ report.description }}" data-reportedby="{{ report.user.get_full_name }}"
+        data-location="{{ report.location }}" data-date="{{ report.date }}">
         <h3 class="font-bold text-lg">{{ report.typeofCrime }}</h3>
         <div class="flex gap-2 text-xs">
           {% if report.status == "Pending" %}
@@ -136,8 +132,30 @@
     </div>
   </div>
   <script>
+    const searchInput = document.querySelector('input[type="text"]');
+
+    searchInput.addEventListener("input", function () {
+      const query = this.value.toLowerCase().trim();
+
+      cards.forEach(card => {
+        const title = card.getAttribute("data-title")?.toLowerCase() || "";
+        const description = card.getAttribute("data-description")?.toLowerCase() || "";
+        const reportedBy = card.getAttribute("data-reportedby")?.toLowerCase() || "";
+        const location = card.getAttribute("data-location")?.toLowerCase() || "";
+        const date = card.getAttribute("data-date")?.toLowerCase() || "";
+
+        const matches = [title, description, reportedBy, location, date].some(field =>
+          field.includes(query)
+        );
+
+        card.style.display = matches ? "" : "none";
+      });
+    });
+  </script>
+
+  <script>
     const cards = document.querySelectorAll(".crime-card");
-  
+
     function clearActiveButtons() {
       document.querySelectorAll(".filter-btn").forEach(btn => {
         btn.classList.remove("bg-gray-200", "bg-red-300", "text-white");
@@ -162,7 +180,7 @@
         button.classList.add("bg-gray-200");
       }
     }
-  
+
     function filterStatus(status, button) {
       cards.forEach(card => {
         const cardStatus = card.getAttribute("data-status");
@@ -171,7 +189,7 @@
       clearActiveButtons();
       setActiveButton(button);
     }
-  
+
     function filterPriority(priority, button) {
       cards.forEach(card => {
         const cardPriority = parseInt(card.getAttribute("data-priority"));
@@ -181,7 +199,7 @@
       setActiveButton(button, true);
     }
   </script>
-  
+
 
 
 </body>

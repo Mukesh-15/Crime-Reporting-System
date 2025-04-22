@@ -56,13 +56,6 @@
                 <option value="investigating">Under Investigation</option>
                 <option value="resolved">Resolved</option>
             </select>
-
-            <button class="border px-3 py-2 rounded">
-                <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582a3 3 0 002.408 1.41 3.003 3.003 0 004.737-.327l1.03 1.03A6.001 6.001 0 013 8V4h1zm16 0v5h-.582a3 3 0 01-2.408 1.41 3.003 3.003 0 01-4.737-.327l-1.03 1.03A6.001 6.001 0 0021 8V4h-1z" />
-                </svg>
-            </button>
         </div>
 
         <!-- Reports Grid -->
@@ -99,7 +92,7 @@
                     {% endif %}
                 </div>
                 <p class="text-sm text-gray-700 mb-2">{{report.description}}</p>
-                <p class="text-xs text-gray-500">Location: City Central Station</p>
+                <p class="text-xs text-gray-500">Location: {{ report.location|slice:":50" }}....</p>
                 <p class="text-xs text-gray-500">Date: {{ report.date }}</p>
                 <button class="mt-3 text-blue-600 text-sm font-semibold hover:underline"><a target="_blank"
                         href="{% url 'view_report' report.id %}">View Details</a></button>

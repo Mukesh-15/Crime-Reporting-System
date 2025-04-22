@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .models import UserCrimeReport, EvidencePhoto
-from django.conf import settings
+from .models import Profile, UserCrimeReport, EvidencePhoto
+from django.apps import AppConfig
 
 
 
@@ -154,6 +154,7 @@ def sign_up(request):
         email = request.POST.get('email', '').strip()
         first_name = request.POST.get('firstname', '').strip()
         last_name = request.POST.get('lastname', '').strip()
+        phone = request.POST.get('phonenumber', '').strip()
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
         confirm_password = request.POST.get('confirm_password', '').strip()
@@ -177,6 +178,9 @@ def sign_up(request):
         user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         user.save()
 
+        profile = Profile.objects.create(user=user,phone=phone)
+        profile.save()
+
         messages.success(request, "Registration successful! Please log in.")
         return redirect(reverse('login'))
 
@@ -184,6 +188,46 @@ def sign_up(request):
         return redirect('/')
 
     return render(request, 'signin.html')
+
+
+@login_required
+def profile_view(request):
+    user_reports = UserCrimeReport.objects.filter(user=request.user)
+
+    analytics = {
+        "total": user_reports.count(),
+        "pending": user_reports.filter(status="Pending").count(),
+        "resolved": user_reports.filter(status="Resolved").count(),
+        "critical": user_reports.filter(priority=5).count(),
+        "under_investigation": user_reports.filter(status="Under Investigation").count(),
+    }
+
+    return render(request, 'profile.html', {
+        'analytics': analytics,
+    })
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        user.first_name = request.POST['first_name']
+        user.last_name = request.POST['last_name']
+        user.email = request.POST['email']
+        profile.phone = request.POST.get('phone')
+        profile.address = request.POST.get('address')
+        
+        user.save()
+        profile.save()
+        messages.success(request, "Your profile was updated successfully.")
+        return redirect('profile_view')
+
+    return render(request, 'edit_profile.html', {
+        'user': user,
+        'profile': profile,
+    })
+
 
 # Test View
 def test_view(request):

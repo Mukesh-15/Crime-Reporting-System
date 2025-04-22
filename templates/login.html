@@ -50,7 +50,6 @@
             <p class="text-gray-600">Access the crime reporting system with your credentials</p>
           </div>
 
-          <!-- Error message block -->
           {% for message in messages%}
           <div id="error" class=" bg-red-100 text-red-700 p-3 mb-4 rounded text-sm">
             <strong>Error:</strong> {{message}}
@@ -94,17 +93,19 @@
               Login
             </button>
           </form>
+          <p class="mt-6 text-center text-sm text-gray-600">
+            Dont't have an account?
+            <a href="/register" class="text-blue-600 hover:underline">Sigup here</a>
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- Features Section -->
     <div class="py-16">
       <div class="container mx-auto px-4">
         <h2 class="text-3xl font-bold text-center mb-12">How CrimeTracker Works</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
-          <!-- Feature 1 -->
           <div class="bg-white rounded-lg p-6 border">
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               📍
@@ -113,7 +114,6 @@
             <p class="text-gray-600">Easily mark the exact location of incidents with our interactive map interface.</p>
           </div>
 
-          <!-- Feature 2 -->
           <div class="bg-white rounded-lg p-6 border">
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               🔔
@@ -122,7 +122,6 @@
             <p class="text-gray-600">Get instant notifications when crimes are reported in your neighborhood.</p>
           </div>
 
-          <!-- Feature 3 -->
           <div class="bg-white rounded-lg p-6 border">
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               ⏱️
@@ -130,8 +129,6 @@
             <h3 class="font-bold text-xl mb-2">Rapid Response</h3>
             <p class="text-gray-600">Direct reporting to authorities ensures faster emergency response times.</p>
           </div>
-
-          <!-- Feature 4 -->
           <div class="bg-white rounded-lg p-6 border">
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               ✅
@@ -143,7 +140,6 @@
       </div>
     </div>
 
-    <!-- Steps Section -->
     <div class="bg-gray-100 py-16">
       <div class="container mx-auto px-4">
         <h2 class="text-3xl font-bold text-center mb-16">Report in Three Simple Steps</h2>
@@ -172,37 +168,6 @@
         </div>
       </div>
     </div>
-
-    <!-- CTA -->
-    <div class="py-16">
-      <div class="container mx-auto px-4">
-        <div class="bg-blue-600 text-white rounded-lg p-8 md:p-12 text-center">
-          <h2 class="text-3xl font-bold mb-4">Join CrimeTracker Today</h2>
-          <p class="text-xl mb-8 max-w-2xl mx-auto">
-            Be part of making your community safer. Report incidents, stay informed, and help law enforcement respond
-            effectively.
-          </p>
-          <button onclick="scrollToLogin()"
-            class="bg-white text-blue-600 px-6 py-3 rounded font-semibold hover:bg-gray-100 transition">
-            Get Started
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-gray-100 py-8">
-      <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
-        <div class="flex items-center mb-4 md:mb-0">
-          <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          </svg>
-          <span class="font-bold text-blue-600">CrimeTracker</span>
-        </div>
-        <div class="text-sm text-gray-600">© 2025 CrimeTracker. All rights reserved.</div>
-      </div>
-    </footer>
 
 </body>
 
