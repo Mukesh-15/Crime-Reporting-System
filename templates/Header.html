@@ -12,7 +12,7 @@
       <!-- Nav Links (Desktop) -->
       <nav class="hidden md:flex items-center space-x-4">
         <a href="/" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-        <a href="report-crime/" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Report Crime</a>
+        <a href="{% url 'report_crime'%}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Report Crime</a>
         <a href="/analytics" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Analytics</a>
       </nav>
 
@@ -37,7 +37,12 @@
           <!-- Dropdown -->
           <div class="absolute right-0 mt-2 w-48 bg-white border shadow-md rounded-md text-sm hidden group-hover:block z-50">
             <div class="p-2 font-medium text-gray-900">{{user.username}}</div>
-            <div class="px-4 py-1 text-gray-500">Citizen</div>
+            <div class="px-4 py-1 text-gray-500">{% if user.is_staff %}
+              Police
+              {% else %}
+              Citizen
+              {% endif %}
+            </div>
             <div class="px-4 py-1 text-gray-500">{{user.email}}</div>
             <a href="{% url 'logout' %}" class="flex items-center px-4 py-2 text-red-500 hover:bg-gray-100">
               <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

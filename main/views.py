@@ -6,11 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import Profile, UserCrimeReport, EvidencePhoto
-from django.apps import AppConfig
 
-
-
-# Part of Day Function
 def part_of_day():
     present_time = datetime.now().hour
     if present_time < 12:
@@ -22,7 +18,6 @@ def part_of_day():
     else:
         return 'Good night'
 
-# Home View
 @login_required
 def home(request):
     if request.user.is_staff:
@@ -36,7 +31,6 @@ def home(request):
         "user": request.user,
     })
 
-# Staff Home (Admin View)
 @login_required
 def staff_home(request):
     if not request.user.is_staff:
@@ -62,7 +56,6 @@ def staff_home(request):
 def report_success(request):
     return render(request, 'report_success.html')
 
-# Crime Reporting Page
 @login_required
 def crime_reporting(request):
     if request.method == 'POST':
@@ -94,7 +87,7 @@ def crime_reporting(request):
 
     return render(request, 'reporting.html')
 
-# View Crime Report
+
 @login_required
 def view_report(request, report_id):
     report = get_object_or_404(UserCrimeReport, id=report_id)
@@ -105,7 +98,6 @@ def view_report(request, report_id):
         'isSuperUser': request.user.is_staff,
     })
 
-# Update Crime Report
 @login_required
 def update_report(request, report_id):
     if not request.user.is_staff:
@@ -122,13 +114,13 @@ def update_report(request, report_id):
 
     return render(request, 'update_status.html', {'report': report})
 
-# Logout
+
 @login_required
 def logout_user(request):
     auth_logout(request)
     return redirect(reverse('login'))
 
-# Login View
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -147,7 +139,6 @@ def user_login(request):
 
     return render(request, 'login.html')
 
-# Sign Up
 
 def sign_up(request):
     if request.method == 'POST':
@@ -228,7 +219,3 @@ def edit_profile(request):
         'profile': profile,
     })
 
-
-# Test View
-def test_view(request):
-    return render(request, 'welcome.html')

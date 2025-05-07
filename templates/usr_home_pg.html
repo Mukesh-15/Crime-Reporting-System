@@ -13,6 +13,7 @@
             top: 0;
             margin-bottom: 10px;
             margin-top: -10px;
+            z-index: 2;
         }
     </style>
     <script>
@@ -38,7 +39,6 @@
             <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"><a target="_blank" href="report-crime/">Report New Crime</a></button>
         </div>
 
-        <!-- Filter + Search -->
         <div class="flex flex-col sm:flex-row gap-4 items-center">
             <div class="relative w-full sm:w-auto sm:flex-1">
                 <input type="text" placeholder="Search reports..."
@@ -58,14 +58,15 @@
             </select>
         </div>
 
-        <!-- Reports Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Crime Card -->
             {% if user_reports %}
             {% for report in user_reports %}
 
-            <div class="bg-white rounded-lg shadow-md p-4">
-                <h3 class="text-lg font-bold mb-1">{{ report.title }}</h3>
+            <div class="crime-card bg-white rounded-lg shadow-md p-4" data-type="{{ report.typeofCrime }}"
+            data-status="{{ report.status }}" data-priority="{{ report.priority }}" data-title="{{ report.typeofCrime }}"
+            data-description="{{ report.description }}" data-reportedby="{{ report.user.get_full_name }}"
+            data-location="{{ report.location }}" data-date="{{ report.date }}">
+                <h3 class="text-lg font-bold mb-1">{{ report.typeofCrime }}</h3>
                 <div class="flex flex-wrap gap-2 mb-3">
                     {% if report.status == "Pending" %}
                     <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Pending</span>
@@ -112,6 +113,29 @@
             {% endif %}
         </div>
     </div>
+
+    <script>
+        const cards = document.querySelectorAll(".crime-card");
+        const searchInput = document.querySelector('input[type="text"]');
+    
+        searchInput.addEventListener("input", function () {
+          const query = this.value.toLowerCase().trim();
+    
+          cards.forEach(card => {
+            const title = card.getAttribute("data-title")?.toLowerCase() || "";
+            const description = card.getAttribute("data-description")?.toLowerCase() || "";
+            const reportedBy = card.getAttribute("data-reportedby")?.toLowerCase() || "";
+            const location = card.getAttribute("data-location")?.toLowerCase() || "";
+            const date = card.getAttribute("data-date")?.toLowerCase() || "";
+    
+            const matches = [title, description, reportedBy, location, date].some(field =>
+              field.includes(query)
+            );
+    
+            card.style.display = matches ? "" : "none";
+          });
+        });
+      </script>
 </body>
 
 </html>
