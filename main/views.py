@@ -3,9 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 from django.urls import reverse
-from .models import Profile, UserCrimeReport, EvidencePhoto
+from .models import Profile, UserCrimeReport, EvidencePhoto,Alerts,Notification
+from django.http import JsonResponse
 
 def part_of_day():
     present_time = datetime.now().hour
@@ -83,9 +84,18 @@ def crime_reporting(request):
         for image_file in request.FILES.getlist('evidence_photos'):
             EvidencePhoto.objects.create(report=report, image=image_file)
 
+        # 🔔 Create notification
+        Notification.objects.create(
+            user=request.user,
+            title="Crime Report Submitted",
+            message=f"Your crime report '{typeofCrime}' has been submitted successfully.",
+            related_report=report
+        ).save()
+
         return redirect('home')
 
     return render(request, 'reporting.html')
+
 
 
 @login_required
@@ -98,10 +108,12 @@ def view_report(request, report_id):
         'isSuperUser': request.user.is_staff,
     })
 
+
+
 @login_required
 def update_report(request, report_id):
     if not request.user.is_staff:
-        return redirect('/')
+        return redirect('/')  # redirect if user is not staff
 
     report = get_object_or_404(UserCrimeReport, id=report_id)
 
@@ -109,10 +121,20 @@ def update_report(request, report_id):
         report.status = request.POST.get('status', report.status)
         report.admin_notes = request.POST.get('adminNotes', report.admin_notes)
         report.save()
+
+        # OPTIONAL: Create a notification for the user
+        Notification.objects.create(
+            user=report.user,
+            title=f"Report #{report.id} Status Updated",
+            message=f"Your crime report is now marked as '{report.status}'.",
+        )
+
         messages.success(request, "Report updated successfully!")
         return redirect('admin_dashboard')
 
     return render(request, 'update_status.html', {'report': report})
+
+
 
 
 @login_required
@@ -198,6 +220,34 @@ def profile_view(request):
     })
 
 @login_required
+@user_passes_test(lambda u: u.is_staff)
+def view_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return render(request, 'profile.html', {'user_profile': user})
+
+
+@user_passes_test(lambda u: u.is_staff)
+def view_user_profile(request, user_id):
+    target_user = get_object_or_404(User, id=user_id)
+    profile = Profile.objects.get(user=target_user)
+    user_reports = UserCrimeReport.objects.filter(user=target_user)
+
+    analytics = {
+        "total": user_reports.count(),
+        "pending": user_reports.filter(status="Pending").count(),
+        "resolved": user_reports.filter(status="Resolved").count(),
+        "critical": user_reports.filter(priority=5).count(),
+        "under_investigation": user_reports.filter(status="Under Investigation").count(),
+    }
+
+    return render(request, 'staff_user_profile.html', {
+        'user': target_user,
+        'profile': profile,
+        'analytics': analytics,
+        'readonly': True,  # Optional: can be used in template
+    })
+
+@login_required
 def edit_profile(request):
     user = request.user
     profile, created = Profile.objects.get_or_create(user=user)
@@ -219,3 +269,74 @@ def edit_profile(request):
         'profile': profile,
     })
 
+
+@login_required
+def alerts(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        message = request.POST.get("message")
+        area = request.POST.get("area")
+        severity = request.POST.get("severity")
+
+        alert = Alerts.objects.create(
+            title=title,
+            message=message,
+            area=area,
+            severity=severity,
+            created_at=datetime.now()
+        ).save()
+
+        # 🔔 Notify all non-staff users
+        users = User.objects.filter(is_staff=False)
+        for user in users:
+            Notification.objects.create(
+                user=user,
+                title=f"New Alert: {title}",
+                message=message,
+                related_alert=alert
+            ).save()
+
+        return redirect('alerts')
+    
+    alerts = Alerts.objects.all()
+    context = {
+        "alerts" : alerts,
+        "user" : request.user,
+    }
+    return render(request, 'alerts.html',context)
+
+
+
+@login_required
+def get_notifications(request):
+    # Get last 10 notifications (do NOT filter after slicing)
+    latest_notifications = Notification.objects.filter(user=request.user).order_by('-date')[:10]
+
+    # Separate query for unread count
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+
+    # Prepare JSON data
+    data = [
+        {
+            'id': n.id,
+            'title': n.title,
+            'message': n.message,
+            'date': n.date.strftime('%b %d, %H:%M'),
+            'is_read': n.is_read,
+        }
+        for n in latest_notifications
+    ]
+
+    return JsonResponse({'notifications': data, 'unread_count': unread_count})
+
+@login_required
+def mark_notification_read(request, notif_id):
+    notif = get_object_or_404(Notification, id=notif_id, user=request.user)
+    notif.is_read = True
+    notif.save()
+    return JsonResponse({'success': True})
+
+@login_required
+def mark_all_notifications_read(request):
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({'success': True})

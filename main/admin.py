@@ -3,3 +3,4 @@ from .models import *
 # Register your models here.
 admin.site.register(UserCrimeReport)
 admin.site.register(EvidencePhoto)
+admin.site.register(Alerts)

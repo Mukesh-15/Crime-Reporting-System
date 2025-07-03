@@ -42,8 +42,24 @@ class UserCrimeReport(models.Model):
 
     def __str__(self):
         return f"Report {self.id} - {self.typeofCrime} - {self.status}"
+ 
+class Alerts(models.Model):
     
+    SEVERITY_CHOICES = [
+    ('info', 'Information'),
+    ('warning', 'Warning'),
+    ('critical', 'Critical'),
+    ]
 
+
+    title = models.CharField(max_length=100, verbose_name="Type of Alert")
+    message = models.TextField(verbose_name="Alert Description", default="No description provided.")  
+    area = models.CharField(max_length=255, default="Unknown Location", verbose_name="area")
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Created At")
+    severity = models.CharField(choices=SEVERITY_CHOICES, max_length=10, default='info')
+
+    def __str__(self):
+        return f"Alert {self.id} - {self.title} - {self.area}"
 
 class EvidencePhoto(models.Model):
     report = models.ForeignKey(UserCrimeReport, on_delete=models.CASCADE, related_name='photos')
@@ -52,3 +68,16 @@ class EvidencePhoto(models.Model):
 
     def __str__(self):
         return f"Photo for Report {self.report.id}"
+    
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100, verbose_name="Title of Notification")
+    message = models.TextField(verbose_name="Notification Message", default="Context not provided")
+    date = models.DateTimeField(default=timezone.now, verbose_name="Notification Date")
+    is_read = models.BooleanField(default=False, verbose_name="Read Status")
+    
+    related_report = models.ForeignKey(UserCrimeReport, on_delete=models.SET_NULL, null=True, blank=True, related_name='notifications')
+    related_alert = models.ForeignKey(Alerts, on_delete=models.SET_NULL, null=True, blank=True, related_name='notifications')
+
+    def __str__(self):
+        return f"Notification to {self.user.username} - {self.title}"
