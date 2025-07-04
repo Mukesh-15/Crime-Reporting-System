@@ -84,7 +84,6 @@ def crime_reporting(request):
         for image_file in request.FILES.getlist('evidence_photos'):
             EvidencePhoto.objects.create(report=report, image=image_file)
 
-        # 🔔 Create notification
         Notification.objects.create(
             user=request.user,
             title="Crime Report Submitted",
@@ -113,7 +112,7 @@ def view_report(request, report_id):
 @login_required
 def update_report(request, report_id):
     if not request.user.is_staff:
-        return redirect('/')  # redirect if user is not staff
+        return redirect('/') 
 
     report = get_object_or_404(UserCrimeReport, id=report_id)
 
@@ -122,7 +121,6 @@ def update_report(request, report_id):
         report.admin_notes = request.POST.get('adminNotes', report.admin_notes)
         report.save()
 
-        # OPTIONAL: Create a notification for the user
         Notification.objects.create(
             user=report.user,
             title=f"Report #{report.id} Status Updated",
@@ -206,6 +204,7 @@ def sign_up(request):
 @login_required
 def profile_view(request):
     user_reports = UserCrimeReport.objects.filter(user=request.user)
+    user = request.user
 
     analytics = {
         "total": user_reports.count(),
@@ -215,16 +214,11 @@ def profile_view(request):
         "under_investigation": user_reports.filter(status="Under Investigation").count(),
     }
 
-    return render(request, 'profile.html', {
+    return render(request, 'staff_user_profile.html', {
+        'user': user,
         'analytics': analytics,
+        'readonly': False,
     })
-
-@login_required
-@user_passes_test(lambda u: u.is_staff)
-def view_profile(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    return render(request, 'profile.html', {'user_profile': user})
-
 
 @user_passes_test(lambda u: u.is_staff)
 def view_user_profile(request, user_id):
@@ -309,13 +303,10 @@ def alerts(request):
 
 @login_required
 def get_notifications(request):
-    # Get last 10 notifications (do NOT filter after slicing)
     latest_notifications = Notification.objects.filter(user=request.user).order_by('-date')[:10]
 
-    # Separate query for unread count
     unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
 
-    # Prepare JSON data
     data = [
         {
             'id': n.id,
