@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        header{
+        header {
             position: sticky;
             top: 0;
             margin-bottom: 10px;
@@ -36,7 +36,8 @@
                 <h1 class="text-2xl font-bold">My Reports</h1>
                 <p class="text-gray-500">Track and manage your submitted crime reports</p>
             </div>
-            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"><a target="_blank" href="report-crime/">Report New Crime</a></button>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"><a target="_blank"
+                    href="report-crime/">Report New Crime</a></button>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-4 items-center">
@@ -50,7 +51,7 @@
                 </svg>
             </div>
 
-            <select class="border rounded px-3 py-2 w-full sm:w-[180px]">
+            <select id="statusFilter" onchange="filterByStatus()" class="border rounded px-3 py-2 w-full sm:w-[180px]">
                 <option value="all">All Statuses</option>
                 <option value="pending">Pending Review</option>
                 <option value="investigating">Under Investigation</option>
@@ -63,9 +64,10 @@
             {% for report in user_reports %}
 
             <div class="crime-card bg-white rounded-lg shadow-md p-4" data-type="{{ report.typeofCrime }}"
-            data-status="{{ report.status }}" data-priority="{{ report.priority }}" data-title="{{ report.typeofCrime }}"
-            data-description="{{ report.description }}" data-reportedby="{{ report.user.get_full_name }}"
-            data-location="{{ report.location }}" data-date="{{ report.date }}">
+                data-status="{{ report.status }}" data-priority="{{ report.priority }}"
+                data-title="{{ report.typeofCrime }}" data-description="{{ report.description }}"
+                data-reportedby="{{ report.user.get_full_name }}" data-location="{{ report.location }}"
+                data-date="{{ report.date }}">
                 <h3 class="text-lg font-bold mb-1">{{ report.typeofCrime }}</h3>
                 <div class="flex flex-wrap gap-2 mb-3">
                     {% if report.status == "Pending" %}
@@ -102,40 +104,82 @@
             {% else %}
             <div class="text-center py-12">
                 <div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-4">
-                  <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M10.29 3.86L1.82 9.14a2 2 0 000 3.72l8.47 5.28a2 2 0 002.42 0l8.47-5.28a2 2 0 000-3.72L12.71 3.86a2 2 0 00-2.42 0z" />
-                  </svg>
+                    <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.29 3.86L1.82 9.14a2 2 0 000 3.72l8.47 5.28a2 2 0 002.42 0l8.47-5.28a2 2 0 000-3.72L12.71 3.86a2 2 0 00-2.42 0z" />
+                    </svg>
                 </div>
                 <h3 class="text-lg font-semibold">No reports found</h3>
                 <p class="text-gray-500 mt-2">There are no crime reports in the system yet.</p>
-              </div>
+            </div>
             {% endif %}
         </div>
     </div>
-
+    {% if messages %}
+    <div id="message-container" class="fixed bottom-4 right-4 z-50 space-y-2">
+        {% for message in messages %}
+        <div class="message-popup px-4 py-3 rounded shadow-lg text-white transition-all duration-500
+      {% if message.tags == 'error' %}
+        bg-red-500
+      {% elif message.tags == 'success' %}
+        bg-green-500
+      {% elif message.tags == 'warning' %}
+        bg-yellow-500 text-gray-900
+      {% else %}
+        bg-blue-500
+      {% endif %}
+    ">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <script>
         const cards = document.querySelectorAll(".crime-card");
         const searchInput = document.querySelector('input[type="text"]');
-    
+
         searchInput.addEventListener("input", function () {
-          const query = this.value.toLowerCase().trim();
-    
-          cards.forEach(card => {
-            const title = card.getAttribute("data-title")?.toLowerCase() || "";
-            const description = card.getAttribute("data-description")?.toLowerCase() || "";
-            const reportedBy = card.getAttribute("data-reportedby")?.toLowerCase() || "";
-            const location = card.getAttribute("data-location")?.toLowerCase() || "";
-            const date = card.getAttribute("data-date")?.toLowerCase() || "";
-    
-            const matches = [title, description, reportedBy, location, date].some(field =>
-              field.includes(query)
-            );
-    
-            card.style.display = matches ? "" : "none";
-          });
+            const query = this.value.toLowerCase().trim();
+
+            cards.forEach(card => {
+                const title = card.getAttribute("data-title")?.toLowerCase() || "";
+                const description = card.getAttribute("data-description")?.toLowerCase() || "";
+                const reportedBy = card.getAttribute("data-reportedby")?.toLowerCase() || "";
+                const location = card.getAttribute("data-location")?.toLowerCase() || "";
+                const date = card.getAttribute("data-date")?.toLowerCase() || "";
+
+                const matches = [title, description, reportedBy, location, date].some(field =>
+                    field.includes(query)
+                );
+
+                card.style.display = matches ? "" : "none";
+            });
         });
-      </script>
+
+
+    </script>
+    <script>
+        setTimeout(() => {
+            const messageContainer = document.getElementById("message-container");
+            if (messageContainer) {
+                messageContainer.classList.add("opacity-0", "translate-y-4");
+                setTimeout(() => messageContainer.remove(), 500);
+            }
+        }, 3000);
+    </script>
+    <script>
+        function filterByStatus() {
+            const statusValue = document.getElementById("statusFilter").value.toLowerCase().trim();
+
+            cards.forEach(card => {
+                const cardStatus = (card.getAttribute("data-status") || "").toLowerCase();
+                const matches = (statusValue === "all") || (cardStatus === statusValue);
+                card.style.display = matches ? "" : "none";
+            });
+        }
+    </script>
+
+
 </body>
 
 </html>

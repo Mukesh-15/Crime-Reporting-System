@@ -101,7 +101,7 @@ def crime_reporting(request):
 def view_report(request, report_id):
     report = get_object_or_404(UserCrimeReport, id=report_id)
     evidence_photos = report.photos.all()
-    return render(request, 'view_report.html', {
+    return render(request, 'View_report.html', {
         'report': report,
         'evidence_photos': evidence_photos,
         'isSuperUser': request.user.is_staff,

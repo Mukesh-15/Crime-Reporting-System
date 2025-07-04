@@ -38,7 +38,8 @@
     <!-- Profile Card -->
     <div class="bg-white shadow rounded-lg p-6 space-y-4">
       <div class="flex items-center space-x-4">
-        <div class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-500">
+        <div
+          class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-500">
           {{ user.first_name.0 }}{{ user.last_name.0 }}
         </div>
         <div>
@@ -94,6 +95,34 @@
       </div>
     </div>
   </div>
+  {% if messages %}
+  <div id="message-container" class="fixed bottom-4 right-4 z-50 space-y-2">
+    {% for message in messages %}
+    <div class="message-popup px-4 py-3 rounded shadow-lg text-white transition-all duration-500
+      {% if message.tags == 'error' %}
+        bg-red-500
+      {% elif message.tags == 'success' %}
+        bg-green-500
+      {% elif message.tags == 'warning' %}
+        bg-yellow-500 text-gray-900
+      {% else %}
+        bg-blue-500
+      {% endif %}
+    ">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <script>
+        setTimeout(() => {
+            const messageContainer = document.getElementById("message-container");
+            if (messageContainer) {
+                messageContainer.classList.add("opacity-0", "translate-y-4");
+                setTimeout(() => messageContainer.remove(), 500);
+            }
+        }, 3000);
+    </script>
 </body>
 
 </html>
