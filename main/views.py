@@ -130,7 +130,7 @@ def update_report(request, report_id):
         messages.success(request, "Report updated successfully!")
         return redirect('admin_dashboard')
 
-    return render(request, 'update_status.html', {'report': report})
+    return render(request, 'Update_status.html', {'report': report})
 
 
 
