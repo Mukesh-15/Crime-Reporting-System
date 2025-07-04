@@ -27,6 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-key')
 DEBUG = 'True'
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://crime-reporting-system-h435.onrender.com']
 
 
 # Application definition
