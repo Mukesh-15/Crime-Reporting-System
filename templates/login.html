@@ -52,7 +52,7 @@
           {% endfor %}
 
 
-          <form class="space-y-4" method="post" action="">
+          <form class="space-y-4" method="post" action="{% url 'home' %}">
             {% csrf_token %}
             <div class="space-y-2">
               <label for="role" class="block font-medium">I am a:</label>
