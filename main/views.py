@@ -54,9 +54,25 @@ def staff_home(request):
 
     return render(request, "PoliceDashboard.html", context)
 
+@user_passes_test(lambda u: u.is_staff)
+def analytics_view(request):
+    stats = {
+        'total': UserCrimeReport.objects.count(),
+        'pending': UserCrimeReport.objects.filter(status="Pending").count(),
+        'investigating': UserCrimeReport.objects.filter(status="Under Investigation").count(),
+        'resolved': UserCrimeReport.objects.filter(status="Resolved").count(),
+        'critical': UserCrimeReport.objects.filter(priority=5).count(),
+        'high': UserCrimeReport.objects.filter(priority=4).count(),
+        'medium': UserCrimeReport.objects.filter(priority=3).count(),
+    }
+    return render(request, 'police_analytics.html', {'stats': stats})
+
 
 @login_required
 def crime_reporting(request):
+    if request.user.is_staff:
+        return redirect('/') 
+    
     if request.method == 'POST':
         typeofCrime = request.POST.get('typeofCrime')
         description = request.POST.get('description')
@@ -292,7 +308,6 @@ def alerts(request):
         "user" : request.user,
     }
     return render(request, 'alerts.html',context)
-
 
 
 @login_required

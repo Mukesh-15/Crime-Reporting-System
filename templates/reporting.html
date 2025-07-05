@@ -33,14 +33,23 @@
             <select name="typeofCrime" required class="w-full border rounded p-2">
               <option value="">Select crime type</option>
               <option value="Theft">Theft</option>
+              <option value="Kidnapping">Kidnapping</option>
+              <option value="Rape">Rape</option>
+              <option value="Murder">Murder</option>
               <option value="Assault">Assault</option>
-              <option value="Vandalism">Vandalism</option>
-              <option value="Burglary">Burglary</option>
-              <option value="Traffic Incident">Traffic Incident</option>
-              <option value="Drug Activity">Drug Activity</option>
-              <option value="Suspicious Activity">Suspicious Activity</option>
+              <option value="Human Trafficking">Human Trafficking</option>
+              <option value="Dowry">Dowry</option>
+              <option value="Public Nuisance">Public Nuisance</option>
+              <option value="Corruption">Corruption</option>
+              <option value="Domestic Violence">Domestic Violence</option>
+              <option value="Sexual Harassment">Sexual Harassment</option>
+              <option value="Missing">Missing</option>
+              <option value="Child Marriage">Child Marriage</option>
+              <option value="Illegal Encroachment of Land">Illegal Encroachment of Land</option>
               <option value="Noise Complaint">Noise Complaint</option>
+              <option value="Drug Trafficking / Smuggling">Drug Trafficking / Smuggling</option>
               <option value="Other">Other</option>
+
             </select>
           </div>
 
@@ -174,7 +183,7 @@
           initMap(lat, lng);
           document.getElementById("latitude").value = lat;
           document.getElementById("longitude").value = lng;
-          
+
         },
         function (error) {
           if (error.code === error.TIMEOUT) {
