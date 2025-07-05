@@ -69,6 +69,7 @@
     </div>
 
     <!-- Analytics Section -->
+    {% if not user.is_staff %}
     <div class="bg-white shadow rounded-lg p-6">
       <h3 class="text-lg font-semibold mb-4">Your Crime Report Analytics</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
@@ -95,6 +96,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
   {% if messages %}
   <div id="message-container" class="fixed bottom-4 right-4 z-50 space-y-2">
     {% for message in messages %}
@@ -115,14 +117,14 @@
   </div>
   {% endif %}
   <script>
-        setTimeout(() => {
-            const messageContainer = document.getElementById("message-container");
-            if (messageContainer) {
-                messageContainer.classList.add("opacity-0", "translate-y-4");
-                setTimeout(() => messageContainer.remove(), 500);
-            }
-        }, 3000);
-    </script>
+    setTimeout(() => {
+      const messageContainer = document.getElementById("message-container");
+      if (messageContainer) {
+        messageContainer.classList.add("opacity-0", "translate-y-4");
+        setTimeout(() => messageContainer.remove(), 500);
+      }
+    }, 3000);
+  </script>
 </body>
 
 </html>
