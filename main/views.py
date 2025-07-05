@@ -54,8 +54,6 @@ def staff_home(request):
 
     return render(request, "PoliceDashboard.html", context)
 
-def report_success(request):
-    return render(request, 'report_success.html')
 
 @login_required
 def crime_reporting(request):
@@ -96,7 +94,6 @@ def crime_reporting(request):
     return render(request, 'reporting.html')
 
 
-
 @login_required
 def view_report(request, report_id):
     report = get_object_or_404(UserCrimeReport, id=report_id)
@@ -106,7 +103,6 @@ def view_report(request, report_id):
         'evidence_photos': evidence_photos,
         'isSuperUser': request.user.is_staff,
     })
-
 
 
 @login_required
@@ -131,8 +127,6 @@ def update_report(request, report_id):
         return redirect('admin_dashboard')
 
     return render(request, 'Update_status.html', {'report': report})
-
-
 
 
 @login_required
@@ -238,7 +232,7 @@ def view_user_profile(request, user_id):
         'user': target_user,
         'profile': profile,
         'analytics': analytics,
-        'readonly': True,  # Optional: can be used in template
+        'readonly': True,
     })
 
 @login_required
@@ -280,7 +274,7 @@ def alerts(request):
             created_at=datetime.now()
         ).save()
 
-        # 🔔 Notify all non-staff users
+        # Notify all non-staff users
         users = User.objects.filter(is_staff=False)
         for user in users:
             Notification.objects.create(
