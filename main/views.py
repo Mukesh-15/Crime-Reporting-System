@@ -24,7 +24,7 @@ def home(request):
     if request.user.is_staff:
         return staff_home(request)
 
-    user_reports = UserCrimeReport.objects.filter(user=request.user)
+    user_reports = UserCrimeReport.objects.filter(user=request.user).order_by('-submitted_at')
 
     return render(request, 'usr_home_pg.html', {
         'tm': part_of_day(),
@@ -37,7 +37,7 @@ def staff_home(request):
     if not request.user.is_staff:
         return redirect('/')
 
-    crime_reports = UserCrimeReport.objects.all()
+    crime_reports = UserCrimeReport.objects.all().order_by('-submitted_at')
 
     status_counts = {
         "pending": crime_reports.filter(status="Pending").count(),
@@ -61,11 +61,13 @@ def analytics_view(request):
         'pending': UserCrimeReport.objects.filter(status="Pending").count(),
         'investigating': UserCrimeReport.objects.filter(status="Under Investigation").count(),
         'resolved': UserCrimeReport.objects.filter(status="Resolved").count(),
+        'rejected': UserCrimeReport.objects.filter(status="Rejected").count(),
         'critical': UserCrimeReport.objects.filter(priority=5).count(),
         'high': UserCrimeReport.objects.filter(priority=4).count(),
         'medium': UserCrimeReport.objects.filter(priority=3).count(),
     }
     return render(request, 'police_analytics.html', {'stats': stats})
+
 
 
 @login_required
@@ -136,7 +138,7 @@ def update_report(request, report_id):
         Notification.objects.create(
             user=report.user,
             title=f"Report #{report.id} Status Updated",
-            message=f"Your crime report is now marked as '{report.status}'.",
+            message=f"Your crime report is now marked as '{report.status}'. Message:{report.admin_notes}",
         )
 
         messages.success(request, "Report updated successfully!")
